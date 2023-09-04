@@ -9,8 +9,7 @@ router.get("", express.json(), async (req: Request, res: Response) => {
     return res.status(400).json({ Message: "No num_adhesion provided" });
 
   const adhPdfPath =
-    process.cwd() +
-    "/impots/ad2015/" +
+    "/var/www/file.edc.asso.fr/html/pdfs/ad2015/" +
     num_adhesion.slice(0, 1) +
     "/" +
     num_adhesion.slice(0, 2).trim() +
@@ -23,6 +22,7 @@ router.get("", express.json(), async (req: Request, res: Response) => {
     fs.readdirSync(adhPdfPath).forEach((file) => {
       filesList.push(file);
     });
+    console.log(filesList);
   return res.status(200).json(filesList);
 });
 
