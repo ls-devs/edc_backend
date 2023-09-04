@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client-js"
+  engineType = "binary"
+  binaryTargets = ["native"]
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model adh_users {
+  ID                   BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  user_login           String   @default("") @db.VarChar(60)
+  user_pass            String   @default("") @db.VarChar(64)
+  user_nicename        String   @default("") @db.VarChar(50)
+  user_email           String   @default("") @db.VarChar(100)
+  user_url             String   @default("") @db.VarChar(100)
+  user_registered      DateTime @default(dbgenerated("('0000-00-00 00:00:00')")) @db.DateTime(0)
+  user_activation_key  String   @default("") @db.VarChar(60)
+  user_status          Int      @default(0)
+  display_name         String   @default("") @db.VarChar(250)
+  pro                  Boolean  @default(false)
+  partenaire           Boolean  @default(false)
+  firstConnAfterRework Boolean  @default(true)
+
+  @@index([user_login], map: "user_login_key")
+  @@index([user_nicename], map: "user_nicename")
+}
