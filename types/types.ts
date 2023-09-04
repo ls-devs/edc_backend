@@ -19,7 +19,7 @@ export type Adherent = {
         Email: [string];
         DateNaissance: [string];
         TypePaiement: [string];
-      },
+      }
     ];
   };
 };
@@ -44,7 +44,7 @@ export type Fiche = {
         SousDomaine?: [string];
         DateCloture?: [string];
         Lot?: [string];
-      },
+      }
     ];
   };
 };
@@ -97,7 +97,7 @@ export type AllFiches = {
         Programme?: [string];
         SousDomainee?: [string];
         DateCloture?: [string];
-      },
+      }
     ];
   };
 };
@@ -112,14 +112,14 @@ export type ListeActions = {
         Expediteur: [
           {
             exp: string;
-          },
+          }
         ];
         ExpediteurIntitule: [string];
         Createur: [string];
         NomCreateur: [string];
         Gestionnaire: [string];
         ReponseWeb_bool: [string];
-      },
+      }
     ];
   };
 };
@@ -152,7 +152,7 @@ export type Telephones = {
         Numero: [string];
         IdTelephoneType: [string];
         type: [string];
-      },
+      }
     ];
   };
 };
@@ -189,7 +189,7 @@ export type Investissements = {
         LoiFiscale: [string];
         RefNum: [string];
         NbPb: [string];
-      },
+      }
     ];
   };
 };
@@ -225,7 +225,7 @@ export type ActionsProgramme = {
         Observations: [string];
         DateCreation: [string];
         type_action: [string];
-      },
+      }
     ];
   };
 };
@@ -254,7 +254,7 @@ export type DetailsInvestissement = {
         LoyerMensuelLogement: [string];
         LoyerMensuelParking: [string];
         H2Envoye_bool: [string];
-      },
+      }
     ];
   };
 };
@@ -289,7 +289,7 @@ export type IInterInvestissement = {
         DateEnvoiPromoteur: [string];
         DateEnvoiPromoteurBanque: [string];
         Montant: [string];
-      },
+      }
     ];
   };
 };
@@ -306,7 +306,7 @@ export type ListePays = {
       {
         IdPays: [string];
         Pays: [string];
-      },
+      }
     ];
   };
 };
@@ -321,7 +321,7 @@ export type FicheSuivi = {
     IdFicheSuiviAdhesion: [
       {
         IdFiche: [string];
-      },
+      }
     ];
   };
 };
@@ -331,7 +331,7 @@ export type NewFiche = {
     CreateIdFiche: [
       {
         IdFiche: [string];
-      },
+      }
     ];
   };
 };
@@ -341,7 +341,7 @@ export type NewDomaine = {
     Domaine: [
       {
         IdDomaine: [string];
-      },
+      }
     ];
   };
 };
@@ -351,7 +351,7 @@ export type NewSerice = {
     ServiceEDC: [
       {
         IdServiceEDC: [string];
-      },
+      }
     ];
   };
 };
@@ -361,7 +361,7 @@ export type NewAssoc = {
     ContactAssociationEDC: [
       {
         IdContact: [string];
-      },
+      }
     ];
   };
 };
@@ -371,7 +371,7 @@ export type NewStatut = {
     FicheStatut: [
       {
         IdFicheStatut: [string];
-      },
+      }
     ];
   };
 };
@@ -381,7 +381,7 @@ export type NewValideur = {
     ContactValideur: [
       {
         IdContact: [string];
-      },
+      }
     ];
   };
 };
@@ -399,7 +399,7 @@ export type NewIdAction = {
     CreateIdAction: [
       {
         IdAction: [string];
-      },
+      }
     ];
   };
 };
@@ -409,7 +409,7 @@ export type NewIdActionType = {
     IdActionType: [
       {
         IdActionType: [string];
-      },
+      }
     ];
   };
 };
@@ -419,7 +419,7 @@ export type ChangementCoord = {
     IdFicheChangementCoordonnes: [
       {
         IdFiche: [string];
-      },
+      }
     ];
   };
 };
@@ -429,7 +429,7 @@ export type SousDomaine = {
     SousDomaine: [
       {
         IdSousDomaine: [string];
-      },
+      }
     ];
   };
 };
@@ -441,7 +441,7 @@ export type ListeVilles = {
         IdCommune: [string];
         Ville: [string];
         CodePostal: [string];
-      },
+      }
     ];
   };
 };
