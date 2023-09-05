@@ -1,6 +1,6 @@
 import express, { Request, Response, Router } from "express";
 import { Paiement } from "../../types/types";
-import fetch from "node-fetch"
+import fetch from "node-fetch";
 
 const router: Router = express.Router();
 
@@ -17,7 +17,7 @@ router.get("", express.json(), async (req: Request, res: Response) => {
       headers: {
         "Content-Type": "application/json",
       },
-    },
+    }
   );
 
   if (reqPaiement.status === 400)
@@ -55,13 +55,13 @@ router.get(
       return res.status(400).json({ Message: "No id_adherent provided" });
 
     const cReq = await fetch(
-      `${process.env.WS_SQL_EDC}/getAppelCotissation2023.php?id_adherent=${id_adherent}`,
+      `${process.env.WS_SQL_EDC}/getAppelCotissation2023.php?id_adherent=${id_adherent}`
     );
 
     const cRes = await cReq.json();
 
     res.status(200).json(cRes);
-  },
+  }
 );
 
 router.get("/new", express.json(), async (req: Request, res: Response) => {
@@ -71,7 +71,7 @@ router.get("/new", express.json(), async (req: Request, res: Response) => {
     return res.status(400).json({ Message: "No id_adherent provided" });
 
   const cReq = await fetch(
-    `${process.env.WS_SQL_EDC}/getAttestations.php?id_adherent=${id_adherent}&IdContact=${id_contact}`,
+    `${process.env.WS_SQL_EDC}/getAttestations.php?id_adherent=${id_adherent}&IdContact=${id_contact}`
   );
 
   const cRes = await cReq.json();
@@ -81,7 +81,7 @@ router.get("/new", express.json(), async (req: Request, res: Response) => {
 
 router.get("/montant", express.json(), async (req: Request, res: Response) => {
   const cReq = await fetch(
-    `${process.env.WS_SQL_EDC}/getMontantCotissation.php`,
+    `${process.env.WS_SQL_EDC}/getMontantCotissation.php`
   );
 
   const cRes = await cReq.json();

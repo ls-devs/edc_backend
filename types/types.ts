@@ -95,7 +95,7 @@ export type AllFiches = {
         lib_histo: [string];
         Lot?: [string];
         Programme?: [string];
-        SousDomainee?: [string];
+        SousDomaine?: [string];
         DateCloture?: [string];
       }
     ];
@@ -169,6 +169,8 @@ export type Investissements = {
     Invest: [
       {
         IdProgramme: [string];
+        DateProcuration?: [string];
+        Banque?: [string];
         Nom: [string];
         Adresse: [string];
         NombreLotResidence: [string];
@@ -195,6 +197,8 @@ export type Investissements = {
 };
 
 export type FmtInvestissements = {
+  Banque?: string;
+  DateProcuration?: string;
   IdProgramme: string;
   Nom: string;
   Adresse: string;
@@ -210,12 +214,12 @@ export type FmtInvestissements = {
   ConseillerVendeur?: string;
   Syndic?: string;
   IdInvestissement: string;
-  DateActe: string;
   DateLivraison: string;
   DateSignature: string;
   LoiFiscale: string;
   RefNum: string;
   NbPb: string;
+  lien_photo: string;
 };
 
 export type ActionsProgramme = {
@@ -240,6 +244,10 @@ export type DetailsInvestissement = {
   DocumentElement: {
     Invest: [
       {
+        DateActe?: [string];
+        LotNature?: [string];
+        LotType?: [string];
+        DateProcuration?: [string];
         RefNum: [string];
         DateSignature: [string];
         DateLivraisonPrevisionnelle: [string];
@@ -261,6 +269,10 @@ export type DetailsInvestissement = {
 
 export type FmtDetailsInvestissement = {
   RefNum: string;
+  LotType?: string;
+  LotNature?: string;
+  DateActe?: string;
+  DateProcuration?: string;
   DateSignature: string;
   DateLivraisonPrevisionnelle: string;
   DateLivraisonReelle: string;

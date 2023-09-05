@@ -6,9 +6,9 @@ import { FmtVilles, ListeVilles } from "../../types/types";
 const router: Router = express.Router();
 
 const getSoapResult: (
-  code_postal: string,
+  code_postal: string
 ) => Promise<string | { Message: string }> = (
-  code_postal: string,
+  code_postal: string
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -19,10 +19,10 @@ const getSoapResult: (
           _err: string,
           result: {
             GetListeVilleResult: string;
-          },
+          }
         ) => {
           return resolve(result.GetListeVilleResult);
-        },
+        }
       );
     });
   });
@@ -58,8 +58,6 @@ router.get("", express.json(), async (req: Request, res: Response) => {
     liste += `${ville.Ville} ${ville.CodePostal}</option>`;
   });
   liste += `</select>`;
-
-  console.log(liste);
 
   res.status(200).send(liste);
 });

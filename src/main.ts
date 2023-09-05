@@ -14,6 +14,8 @@ import Pays from "./routes/pays";
 import Adresse from "./routes/adresse";
 import Suivi from "./routes/suvi";
 import Villes from "./routes/villes";
+import Changes from "./routes/changes";
+import Comments from "./routes/comments";
 
 const app = express();
 const port = 3000;
@@ -33,6 +35,8 @@ app.use("/telephone", Telephone);
 app.use("/impots", Impots);
 app.use("/investissements", Investissements);
 app.use("/actions", Actions);
+app.use("/changes", Changes);
+app.use("/comments", Comments);
 
 app.listen(port, () => {
   console.log(`Server listenning at http://localhost:${port} 🚀`);

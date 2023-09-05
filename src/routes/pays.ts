@@ -17,10 +17,10 @@ const getSoapResult: () => Promise<string | { Message: string }> = (): Promise<
           _err: string,
           result: {
             GetListePaysResult: string;
-          },
+          }
         ) => {
           return resolve(result.GetListePaysResult);
-        },
+        }
       );
     });
   });
@@ -46,7 +46,6 @@ router.get("", express.json(), async (req: Request, res: Response) => {
     });
   });
 
-  console.log(fmtPays);
   res.status(200).json({ Pays: fmtPays });
 });
 

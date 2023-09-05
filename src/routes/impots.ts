@@ -22,7 +22,6 @@ router.get("", express.json(), async (req: Request, res: Response) => {
     fs.readdirSync(adhPdfPath).forEach((file) => {
       filesList.push(file);
     });
-    console.log(filesList);
   return res.status(200).json(filesList);
 });
 

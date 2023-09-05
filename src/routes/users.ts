@@ -2,7 +2,7 @@ import express, { Request, Response, Router } from "express";
 import { prisma } from "../../db/getPrisma";
 import Soap from "../../utils/getSoap";
 const router: Router = express.Router();
-import fetch from "node-fetch"
+import fetch from "node-fetch";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unreachable code error
@@ -12,10 +12,10 @@ BigInt.prototype.toJSON = function (): string {
 
 const getSoapResult: (
   id_contact: string,
-  emailAdh: string,
+  emailAdh: string
 ) => Promise<string | { Message: string }> = (
   id_contact: string,
-  emailAdh: string,
+  emailAdh: string
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -26,10 +26,10 @@ const getSoapResult: (
           _err: string,
           result: {
             UpdateEmailResult: string;
-          },
+          }
         ) => {
           return resolve(result.UpdateEmailResult);
-        },
+        }
       );
     });
   });
@@ -38,7 +38,6 @@ const getSoapResult: (
 router
   // GET User
   .get("", express.json(), async (req: Request, res: Response) => {
-
     try {
       const { email, password } = req.body;
       if (!email) return res.status(400).json({ Message: "No email provided" });
@@ -57,18 +56,17 @@ router
 
       if (!user) return res.status(404).json({ Message: "No user found" });
 
-      const reqAdherent = await fetch(
-	"http://localhost:3000/adherents", {
-	method: "POST",
-	body: JSON.stringify({
+      const reqAdherent = await fetch("http://localhost:3000/adherents", {
+        method: "POST",
+        body: JSON.stringify({
           adherent_email: user.user_email,
           is_partenaire: user.partenaire,
-          firstConnAfterRework: user.firstConnAfterRework
-      	}),
-         headers: {
+          firstConnAfterRework: user.firstConnAfterRework,
+        }),
+        headers: {
           "Content-Type": "application/json",
         },
-	});
+      });
 
       const resAdherent = await reqAdherent.json();
 

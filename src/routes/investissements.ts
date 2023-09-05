@@ -1,6 +1,7 @@
 import express, { Request, Response, Router } from "express";
 import Soap from "../../utils/getSoap";
 import { parseSoapXML } from "../../utils/parseSoap";
+import * as fs from "fs";
 import {
   ADFInvestissement,
   DetailsInvestissement,
@@ -14,9 +15,9 @@ import {
 const router: Router = express.Router();
 
 const getSoapResult: (
-  emailAdh: string,
+  emailAdh: string
 ) => Promise<string | { Message: string }> = (
-  emailAdh: string,
+  emailAdh: string
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -27,10 +28,10 @@ const getSoapResult: (
           _err: string,
           result: {
             GetListeInvestissementsAdherentResult: string;
-          },
+          }
         ) => {
           return resolve(result.GetListeInvestissementsAdherentResult);
-        },
+        }
       );
     });
   });
@@ -51,7 +52,6 @@ router.get("", express.json(), async (req: Request, res: Response) => {
     return res.status(400).json({ Message: soapData });
 
   const investissement = await parseSoapXML<Investissements>(soapData);
-
   const fmtInvestissement: FmtInvestissements[] = [];
 
   if (investissement.DocumentElement.Invest) {
@@ -59,6 +59,7 @@ router.get("", express.json(), async (req: Request, res: Response) => {
       fmtInvestissement.push({
         IdProgramme: invest.IdProgramme[0],
         Nom: invest.Nom[0],
+        Banque: invest.Banque?.[0],
         Adresse: invest.Adresse[0],
         NombreLotResidence: invest.NombreLotResidence?.[0],
         Ville: invest.Ville[0],
@@ -73,23 +74,31 @@ router.get("", express.json(), async (req: Request, res: Response) => {
         ConseillerVendeur: invest.ConseillerVendeur?.[0],
         Syndic: invest.Syndic?.[0],
         IdInvestissement: invest.IdInvestissement[0],
-        DateActe: invest.DateActe?.[0],
         DateLivraison: invest.DateLivraison?.[0],
         DateSignature: invest.DateSignature[0],
         LoiFiscale: invest.LoiFiscale[0],
         RefNum: invest.RefNum[0],
         NbPb: invest.NbPb[0],
+        lien_photo: "",
       });
     });
   }
+
+  fmtInvestissement.forEach((invest) => {
+    if (fs.existsSync(process.cwd() + "/phototheque/" + invest.Nom + ".pdf")) {
+      invest.lien_photo = invest.Nom.replace("'", "&apos;") + ".pdf";
+    } else {
+      invest.lien_photo = "";
+    }
+  });
 
   return res.status(200).json({ Invest: fmtInvestissement });
 });
 
 const getSoapResultDetails: (
-  id_investissement: string,
+  id_investissement: string
 ) => Promise<string | { Message: string }> = (
-  id_investissement: string,
+  id_investissement: string
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -100,10 +109,10 @@ const getSoapResultDetails: (
           _err: string,
           result: {
             GetDetailsInvestissementResult: string;
-          },
+          }
         ) => {
           return resolve(result.GetDetailsInvestissementResult);
-        },
+        }
       );
     });
   });
@@ -131,8 +140,12 @@ router.get("/details", express.json(), async (req: Request, res: Response) => {
         RefNum: detail.RefNum?.[0],
         DateSignature: detail.DateSignature?.[0],
         DateLivraisonPrevisionnelle: detail.DateLivraisonPrevisionnelle?.[0],
+        DateActe: detail.DateActe?.[0],
         DateLivraisonReelle: detail.DateLivraisonReelle?.[0],
         InvestissementProduit: detail.InvestissementProduit?.[0],
+        DateProcuration: detail.DateProcuration?.[0],
+        LotType: detail.LotType?.[0],
+        LotNature: detail.LotNature?.[0],
         Programme: detail.Programme?.[0],
         SurfaceHabitable: detail.SurfaceHabitable?.[0],
         SurfaceAnnexe: detail.SurfaceAnnexe?.[0],
@@ -150,9 +163,9 @@ router.get("/details", express.json(), async (req: Request, res: Response) => {
 });
 
 const getSoapResultADF: (
-  id_investissement: string,
+  id_investissement: string
 ) => Promise<string | { Message: string }> = (
-  id_investissement: string,
+  id_investissement: string
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -163,10 +176,10 @@ const getSoapResultADF: (
           _err: string,
           result: {
             GetADFInvestissementResult: string;
-          },
+          }
         ) => {
           return resolve(result.GetADFInvestissementResult);
-        },
+        }
       );
     });
   });
@@ -191,9 +204,9 @@ router.get("/adf", express.json(), async (req: Request, res: Response) => {
 });
 
 const getSoapResultInter: (
-  id_investissement: string,
+  id_investissement: string
 ) => Promise<string | { Message: string }> = (
-  id_investissement: string,
+  id_investissement: string
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -204,10 +217,10 @@ const getSoapResultInter: (
           _err: string,
           result: {
             GetIInterInvestissementResult: string;
-          },
+          }
         ) => {
           return resolve(result.GetIInterInvestissementResult);
-        },
+        }
       );
     });
   });
