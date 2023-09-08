@@ -7,11 +7,11 @@ import { parseSoapXML } from "../../utils/parseSoap";
 const router: Router = express.Router();
 
 const getSoapResult: (
-  emailAdh: string,
+  emailAdh: string
 ) => Promise<string | { Message: string }> = (
-  emailAdh: string,
+  emailAdh: string
 ): Promise<string | { Message: string }> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve, _reject) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
       if (_err) return resolve({ Message: "Error creating SOAP Client" });
       client.GetAdherentDonnees(
@@ -20,10 +20,10 @@ const getSoapResult: (
           _err: string,
           result: {
             GetAdherentDonneesResult: string;
-          },
+          }
         ) => {
           return resolve(result.GetAdherentDonneesResult);
-        },
+        }
       );
     });
   });

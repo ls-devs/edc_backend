@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import Users from "./routes/users";
 import Adherents from "./routes/adherents";
 import Fiche from "./routes/fiche";
@@ -19,6 +20,7 @@ import Comments from "./routes/comments";
 
 const app = express();
 const port = 3000;
+app.use(cors());
 
 app.use("/users", Users);
 app.use("/villes", Villes);

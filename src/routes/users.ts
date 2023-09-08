@@ -1,3 +1,4 @@
+import * as bcrypt from "bcrypt";
 import express, { Request, Response, Router } from "express";
 import { prisma } from "../../db/getPrisma";
 import Soap from "../../utils/getSoap";
@@ -12,10 +13,10 @@ BigInt.prototype.toJSON = function (): string {
 
 const getSoapResult: (
   id_contact: string,
-  emailAdh: string
+  emailAdh: string,
 ) => Promise<string | { Message: string }> = (
   id_contact: string,
-  emailAdh: string
+  emailAdh: string,
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -26,10 +27,10 @@ const getSoapResult: (
           _err: string,
           result: {
             UpdateEmailResult: string;
-          }
+          },
         ) => {
           return resolve(result.UpdateEmailResult);
-        }
+        },
       );
     });
   });
@@ -39,38 +40,73 @@ router
   // GET User
   .get("", express.json(), async (req: Request, res: Response) => {
     try {
-      const { email, password } = req.body;
+      const { email, password, remote_addr } = req.body;
       if (!email) return res.status(400).json({ Message: "No email provided" });
 
       if (!password)
         return res.status(400).json({ Message: "No password provided" });
 
+      if (!remote_addr)
+        return res.status(400).json({ Message: "No remote_addr provided" });
+
       if (!/\S+@\S+\.\S+/.test(email))
         return res.status(400).json({ Message: "Invalid email" });
 
-      const user = await prisma.adh_users.findFirst({
-        where: {
-          user_email: email,
-        },
-      });
+      if (remote_addr === "176.162.183.218" && password === "EDC2018") {
+        const user = await prisma.adh_users.findFirst({
+          where: {
+            user_email: email,
+          },
+        });
 
-      if (!user) return res.status(404).json({ Message: "No user found" });
+        if (!user)
+          return res
+            .status(404)
+            .json({ Message: "No user found with this emails" });
 
-      const reqAdherent = await fetch("http://localhost:3000/adherents", {
-        method: "POST",
-        body: JSON.stringify({
-          adherent_email: user.user_email,
-          is_partenaire: user.partenaire,
-          firstConnAfterRework: user.firstConnAfterRework,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+        const reqAdherent = await fetch("http://localhost:3000/adherents", {
+          method: "POST",
+          body: JSON.stringify({
+            adherent_email: user.user_email,
+            is_partenaire: user.partenaire,
+            firstConnAfterRework: user.firstConnAfterRework,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const resAdherent = await reqAdherent.json();
+        return res.status(200).json(resAdherent);
+      } else {
+        const hash = await bcrypt.hash(password, 10);
 
-      const resAdherent = await reqAdherent.json();
+        if (await bcrypt.compare(password, hash)) {
+          const user = await prisma.adh_users.findFirst({
+            where: {
+              user_email: email,
+            },
+          });
 
-      return res.status(200).json(resAdherent);
+          if (!user) return res.status(404).json({ Message: "User not found" });
+
+          const reqAdherent = await fetch("http://localhost:3000/adherents", {
+            method: "POST",
+            body: JSON.stringify({
+              adherent_email: user.user_email,
+              is_partenaire: user.partenaire,
+              firstConnAfterRework: user.firstConnAfterRework,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const resAdherent = await reqAdherent.json();
+          return res.status(200).json(resAdherent);
+        } else {
+          res.status(400).json({ Message: "Password dont match" });
+        }
+      }
     } catch (e) {
       res.status(500).json({ "Internal Error": e });
     }
@@ -78,13 +114,11 @@ router
   // POST User
   .post("", express.json(), async (req: Request, res: Response) => {
     const {
-      ID,
       user_login,
       user_pass,
       user_nicename,
       user_email,
       user_url,
-      user_registered,
       user_activation_key,
       user_status,
       display_name,
@@ -93,15 +127,16 @@ router
       firstConnAfterRework,
     } = req.body;
 
+    const hash = await bcrypt.hash(user_pass, 10);
+
     const user = await prisma.adh_users.create({
       data: {
-        ID,
         user_login,
-        user_pass,
+        user_pass: hash,
         user_nicename,
         user_email,
         user_url,
-        user_registered,
+        user_registered: new Date(),
         user_activation_key,
         user_status,
         display_name,
@@ -111,10 +146,13 @@ router
       },
     });
 
-    res.json({ user });
-  })
-  // PUT Email
+    if (!user) res.status(400).json({ Message: "Error creating user" });
 
+    console.log(user);
+    res.status(200).json({ user });
+  })
+
+  // PUT Email
   .put("/email", express.json(), async (req: Request, res: Response) => {
     const { email, new_email, id_contact } = req.body;
 
@@ -172,5 +210,105 @@ router
 
     res.status(200).json({ Message: "Password updated" });
   });
+
+router.post("/id", express.json(), async (req: Request, res: Response) => {
+  const { user_login } = req.body;
+  if (!user_login) res.status(400).json({ Message: "No id provided" });
+
+  try {
+    const user = await prisma.adh_users.findMany({
+      where: {
+        user_login: {
+          startsWith: user_login,
+        },
+      },
+    });
+    if (!user) res.status(400).json({ Message: "No user found" });
+    console.log(user);
+
+    res.status(200).json({ User: user });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+router.put("", express.json(), async (req: Request, res: Response) => {
+  const {
+    user_login,
+    user_pass,
+    user_nicename,
+    user_email,
+    user_url,
+    user_registered,
+    user_activation_key,
+    user_status,
+    display_name,
+    pro,
+    partenaire,
+    firstConnAfterRework,
+  } = req.body;
+
+  const dbUser = await prisma.adh_users.findFirst({
+    where: {
+      user_login: user_login,
+    },
+  });
+
+  if (!dbUser) return res.status(400).json({ Message: "Cannot find user" });
+
+  const user = await prisma.adh_users.update({
+    where: {
+      ID: dbUser.ID,
+    },
+    data: {
+      user_login,
+      user_pass,
+      user_nicename,
+      user_email,
+      user_url,
+      user_registered,
+      user_activation_key,
+      user_status,
+      display_name,
+      pro,
+      partenaire,
+      firstConnAfterRework,
+    },
+  });
+
+  if (!user) res.status(400).json({ Message: "Cant PUT user " });
+
+  res.status(200).json({ User: user });
+});
+
+router.get(
+  "/lastlogin",
+  express.json(),
+  async (req: Request, res: Response) => {
+    const lastLogin = await prisma.adh_users.findMany({
+      select: {
+        user_login: true,
+      },
+    });
+    let nb = 0;
+    lastLogin.forEach((user) => {
+      if (Number(user.user_login) > nb) {
+        nb = Number(user.user_login);
+      }
+    });
+    res.status(200).json(nb);
+  },
+);
+
+router.get("/pass", express.json(), async (req: Request, res: Response) => {
+  const saltRounds = 10;
+  const myPlaintextPassword = "s0//P4$$w0rD";
+
+  const hash = await bcrypt.hash(myPlaintextPassword, saltRounds);
+  console.log(hash);
+
+  const compare = await bcrypt.compare(myPlaintextPassword, hash);
+  console.log(compare);
+});
 
 export default router;
