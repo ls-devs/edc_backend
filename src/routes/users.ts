@@ -4,6 +4,7 @@ import { prisma } from "../../db/getPrisma";
 import Soap from "../../utils/getSoap";
 const router: Router = express.Router();
 import fetch from "node-fetch";
+import { comparePass, hashPass } from "../../utils/hashPass";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unreachable code error
@@ -52,7 +53,7 @@ router
       if (!/\S+@\S+\.\S+/.test(email))
         return res.status(400).json({ Message: "Invalid email" });
 
-      // if (remote_addr === "176.162.183.218" && password === "EDC2018") {
+      if (remote_addr === "176.162.183.218" && password === "EDC2018") {
         const user = await prisma.adh_users.findFirst({
           where: {
             user_email: email,
@@ -77,36 +78,35 @@ router
         });
         const resAdherent = await reqAdherent.json();
         return res.status(200).json(resAdherent);
-      // } else {
-      //   const hash = await bcrypt.hash(password, 10);
-      //
-      //   if (await bcrypt.compare(password, hash)) {
-      //     const user = await prisma.adh_users.findFirst({
-      //       where: {
-      //         user_email: email,
-      //       },
-      //     });
-      //
-      //     if (!user) return res.status(404).json({ Message: "User not found" });
-      //
-      //     const reqAdherent = await fetch("http://localhost:3000/adherents", {
-      //       method: "POST",
-      //       body: JSON.stringify({
-      //         adherent_email: user.user_email,
-      //         is_partenaire: user.partenaire,
-      //         firstConnAfterRework: user.firstConnAfterRework,
-      //       }),
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //       },
-      //     });
-      //
-      //     const resAdherent = await reqAdherent.json();
-      //     return res.status(200).json(resAdherent);
-      //   } else {
-      //     res.status(400).json({ Message: "Password dont match" });
-      //   }
-      // }
+      } else {
+        const hash = await hashPass(password);
+        if (await comparePass(password, hash)) {
+          const user = await prisma.adh_users.findFirst({
+            where: {
+              user_email: email,
+            },
+          });
+
+          if (!user) return res.status(404).json({ Message: "User not found" });
+
+          const reqAdherent = await fetch("http://localhost:3000/adherents", {
+            method: "POST",
+            body: JSON.stringify({
+              adherent_email: user.user_email,
+              is_partenaire: user.partenaire,
+              firstConnAfterRework: user.firstConnAfterRework,
+            }),
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          const resAdherent = await reqAdherent.json();
+          return res.status(200).json(resAdherent);
+        } else {
+          res.status(400).json({ Message: "Password dont match" });
+        }
+      }
     } catch (e) {
       res.status(500).json({ "Internal Error": e });
     }

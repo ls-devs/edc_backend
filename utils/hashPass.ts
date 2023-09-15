@@ -1,17 +1,22 @@
-import * as bcrypt from "bcrypt";
-
-const saltRounds = 10;
-const myPlaintextPassword = "s0//P4$$w0rD";
-
-let myhash: string = "";
-bcrypt.genSalt(saltRounds, function (err, salt) {
-  bcrypt.hash(myPlaintextPassword, salt, function (err, hash) {
-    myhash = hash;
-    console.log(myhash);
+import * as crypto from "crypto";
+const hashPass = (pass: string): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const salt = crypto.randomBytes(15).toString("hex");
+    crypto.scrypt(pass, salt, 64, (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(salt + ":" + derivedKey.toString("hex"));
+    });
   });
-});
+};
 
-bcrypt.compare(myPlaintextPassword, myhash, function (err, result) {
-  // result == true
-  console.log(result);
-});
+const comparePass = async (pass: string, hash: string) => {
+  return new Promise((resolve, reject) => {
+    const [salt, key] = hash.split(":");
+    crypto.scrypt(pass, salt, 64, (err, derivedKey) => {
+      if (err) reject(err);
+      resolve(key === derivedKey.toString("hex"));
+    });
+  });
+};
+
+export { hashPass, comparePass };
