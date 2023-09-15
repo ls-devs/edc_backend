@@ -1,4 +1,3 @@
-import * as bcrypt from "bcrypt";
 import express, { Request, Response, Router } from "express";
 import { prisma } from "../../db/getPrisma";
 import Soap from "../../utils/getSoap";
@@ -40,73 +39,39 @@ router
   // GET User
   .get("", express.json(), async (req: Request, res: Response) => {
     try {
-      const { email, password, remote_addr } = req.body;
+      const { email, password } = req.body;
       if (!email) return res.status(400).json({ Message: "No email provided" });
 
       if (!password)
         return res.status(400).json({ Message: "No password provided" });
 
-      if (!remote_addr)
-        return res.status(400).json({ Message: "No remote_addr provided" });
-
       if (!/\S+@\S+\.\S+/.test(email))
         return res.status(400).json({ Message: "Invalid email" });
 
-      // if (remote_addr === "176.162.183.218" && password === "EDC2018") {
-        const user = await prisma.adh_users.findFirst({
-          where: {
-            user_email: email,
-          },
-        });
+      const user = await prisma.adh_users.findFirst({
+        where: {
+          user_email: email,
+        },
+      });
 
-        if (!user)
-          return res
-            .status(404)
-            .json({ Message: "No user found with this emails" });
+      if (!user)
+        return res
+          .status(404)
+          .json({ Message: "No user found with this emails" });
 
-        const reqAdherent = await fetch("http://localhost:3000/adherents", {
-          method: "POST",
-          body: JSON.stringify({
-            adherent_email: user.user_email,
-            is_partenaire: user.partenaire,
-            firstConnAfterRework: user.firstConnAfterRework,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        const resAdherent = await reqAdherent.json();
-        return res.status(200).json(resAdherent);
-      // } else {
-      //   const hash = await bcrypt.hash(password, 10);
-      //
-      //   if (await bcrypt.compare(password, hash)) {
-      //     const user = await prisma.adh_users.findFirst({
-      //       where: {
-      //         user_email: email,
-      //       },
-      //     });
-      //
-      //     if (!user) return res.status(404).json({ Message: "User not found" });
-      //
-      //     const reqAdherent = await fetch("http://localhost:3000/adherents", {
-      //       method: "POST",
-      //       body: JSON.stringify({
-      //         adherent_email: user.user_email,
-      //         is_partenaire: user.partenaire,
-      //         firstConnAfterRework: user.firstConnAfterRework,
-      //       }),
-      //       headers: {
-      //         "Content-Type": "application/json",
-      //       },
-      //     });
-      //
-      //     const resAdherent = await reqAdherent.json();
-      //     return res.status(200).json(resAdherent);
-      //   } else {
-      //     res.status(400).json({ Message: "Password dont match" });
-      //   }
-      // }
+      const reqAdherent = await fetch("http://localhost:3000/adherents", {
+        method: "POST",
+        body: JSON.stringify({
+          adherent_email: user.user_email,
+          is_partenaire: user.partenaire,
+          firstConnAfterRework: user.firstConnAfterRework,
+        }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      const resAdherent = await reqAdherent.json();
+      return res.status(200).json(resAdherent);
     } catch (e) {
       res.status(500).json({ "Internal Error": e });
     }
@@ -127,12 +92,10 @@ router
       firstConnAfterRework,
     } = req.body;
 
-    const hash = await bcrypt.hash(user_pass, 10);
-
     const user = await prisma.adh_users.create({
       data: {
         user_login,
-        user_pass: hash,
+        user_pass,
         user_nicename,
         user_email,
         user_url,
@@ -299,16 +262,5 @@ router.get(
     res.status(200).json(nb);
   },
 );
-
-router.get("/pass", express.json(), async (req: Request, res: Response) => {
-  const saltRounds = 10;
-  const myPlaintextPassword = "s0//P4$$w0rD";
-
-  const hash = await bcrypt.hash(myPlaintextPassword, saltRounds);
-  console.log(hash);
-
-  const compare = await bcrypt.compare(myPlaintextPassword, hash);
-  console.log(compare);
-});
 
 export default router;
