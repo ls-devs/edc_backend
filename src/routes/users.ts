@@ -4,6 +4,7 @@ import { prisma } from "../../db/getPrisma";
 import Soap from "../../utils/getSoap";
 const router: Router = express.Router();
 import fetch from "node-fetch";
+import { generateHashPassword, verifyPassword } from "../../utils/hashPass";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unreachable code error
@@ -305,9 +306,9 @@ router.get(
 router.get("/pass", express.json(), async (req: Request, res: Response) => {
   const pass = "pass";
 
-  const hash = await bcrypt.hash(pass, 10);
+  const hash = await generateHashPassword(pass);
 
-  const compare = await bcrypt.compare(pass, hash);
+  const compare = await verifyPassword(hash, pass);
 
   return res.status(200).json(compare);
 });
