@@ -1,4 +1,4 @@
-import express, { Request, Response, Router, json } from "express";
+import express, { Request, Response, Router } from "express";
 import Soap from "../../utils/getSoap";
 
 const router: Router = express.Router();
@@ -8,13 +8,13 @@ const getSoapResult: (
   addr2: string,
   addr3: string,
   id_commune: string,
-  id_contact: string
+  id_contact: string,
 ) => Promise<string | { Message: string }> = (
   addr1: string,
   addr2: string,
   addr3: string,
   id_commune: string,
-  id_contact: string
+  id_contact: string,
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -31,10 +31,10 @@ const getSoapResult: (
           _err: string,
           result: {
             InsertAdresseResult: string;
-          }
+          },
         ) => {
           return resolve(result.InsertAdresseResult);
-        }
+        },
       );
     });
   });
@@ -56,7 +56,7 @@ router.get("", express.json(), async (req: Request, res: Response) => {
     addr2,
     addr3,
     id_commune,
-    id_contact
+    id_contact,
   );
   if (typeof soapData !== "string") {
     return res.status(400).json(soapData);

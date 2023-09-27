@@ -4,7 +4,6 @@ import { prisma } from "../../db/getPrisma";
 import Soap from "../../utils/getSoap";
 const router: Router = express.Router();
 import fetch from "node-fetch";
-import { comparePass, hashPass } from "../../utils/hashPass";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore: Unreachable code error
@@ -293,7 +292,8 @@ router.get(
       },
     });
     let nb = 0;
-    lastLogin.forEach((user) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    lastLogin.forEach((user: any) => {
       if (Number(user.user_login) > nb) {
         nb = Number(user.user_login);
       }
@@ -303,7 +303,13 @@ router.get(
 );
 
 router.get("/pass", express.json(), async (req: Request, res: Response) => {
-  console.log(await hashPass("PsTempo2024"));
+  const pass = "pass";
+
+  const hash = await bcrypt.hash(pass, 10);
+
+  const compare = await bcrypt.compare(pass, hash);
+
+  return res.status(200).json(compare);
 });
 
 export default router;

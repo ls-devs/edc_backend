@@ -10,7 +10,7 @@ const getSoapResult: (
 ) => Promise<string | { Message: string }> = (
   id_programme: string,
 ): Promise<string | { Message: string }> => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
       if (_err) return resolve({ Message: "Error creating SOAP Client" });
       client.GetActionsWebProgramme(
