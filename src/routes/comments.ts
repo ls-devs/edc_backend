@@ -5,11 +5,11 @@ const router: Router = express.Router();
 const getSoapComment: (
   if_fiche: string,
   message: string,
-  id_contact: string
+  id_contact: string,
 ) => Promise<string | { Message: string }> = (
   id_fiche: string,
   message: string,
-  id_contact: string
+  id_contact: string,
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -24,17 +24,16 @@ const getSoapComment: (
           _err: string,
           result: {
             InsertWebActionResult: string;
-          }
+          },
         ) => {
           return resolve(result.InsertWebActionResult);
-        }
+        },
       );
     });
   });
 };
 
 router.get("", express.json(), async (req: Request, res: Response) => {
-  console.log(req)
   const { id_fiche, message, id_contact } = req.body;
   if (!id_fiche)
     return res.status(400).json({ Message: "No id_fiche provided" });
@@ -49,8 +48,6 @@ router.get("", express.json(), async (req: Request, res: Response) => {
   }
   if (soapData === "Erreur de web service")
     return res.status(400).json({ Message: soapData });
-
-  console.log(soapData);
 
   res.status(200).json({ statut: "OK", message: "" });
 });

@@ -17,15 +17,18 @@ import Suivi from "./routes/suvi";
 import Villes from "./routes/villes";
 import Changes from "./routes/changes";
 import Comments from "./routes/comments";
+import Reset from "./routes/reset";
 
 const app = express();
 const port = 3000;
 app.use(cors());
-app.use(function(req, res, next) {
-res.header("Access-Control-Allow-Origin", "*");
-res.header("Access-Control-Allow-Headers",
-     "Origin, X-Requested-With, Content-Type, Accept");
-next();
+app.use(function (req, res, next) {
+  res.header("Access-Control-Allow-Origin", "*");
+  res.header(
+    "Access-Control-Allow-Headers",
+    "Origin, X-Requested-With, Content-Type, Accept",
+  );
+  next();
 });
 
 app.use("/users", Users);
@@ -45,6 +48,7 @@ app.use("/investissements", Investissements);
 app.use("/actions", Actions);
 app.use("/changes", Changes);
 app.use("/comments", Comments);
+app.use("/reset", Reset);
 
 app.listen(port, () => {
   console.log(`Server listenning at http://localhost:${port} 🚀`);

@@ -1,7 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  engineType = "binary"
+  provider      = "prisma-client-js"
   binaryTargets = ["native"]
+  engineType    = "binary"
 }
 
 datasource db {
@@ -12,7 +12,7 @@ datasource db {
 model adh_users {
   ID                   BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
   user_login           String   @default("") @db.VarChar(60)
-  user_pass            String   @default("") @db.VarChar(64)
+  user_pass            String   @default("")
   user_nicename        String   @default("") @db.VarChar(50)
   user_email           String   @default("") @db.VarChar(100)
   user_url             String   @default("") @db.VarChar(100)
@@ -23,7 +23,20 @@ model adh_users {
   pro                  Boolean  @default(false)
   partenaire           Boolean  @default(false)
   firstConnAfterRework Boolean  @default(true)
+  Token                Token[]
 
   @@index([user_login], map: "user_login_key")
   @@index([user_nicename], map: "user_nicename")
+}
+
+model Token {
+  ID          BigInt    @id @unique @default(autoincrement())
+  tokenStr    String    @unique
+  createdAt   DateTime  @default(now())
+  adh_usersID BigInt    @db.UnsignedBigInt
+  adh_user    adh_users @relation(fields: [adh_usersID], references: [ID])
+  hash        String    @default("")
+  isValid     Boolean   @default(true)
+
+  @@index([adh_usersID], map: "Token_adh_usersID_fkey")
 }
