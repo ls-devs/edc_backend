@@ -47,7 +47,7 @@ router
     const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
     const sendMail = await fetch(
-      `http://localhost/assoedc/wp-admin/admin-ajax.php?action=mail_before_submit&toemail=laurent@wasabi-artwork.com&message=${message}`,
+      `http://localhost/assoedc/wp-admin/admin-ajax.php?action=mail_before_submit&toemail=${user.user_email}&message=${message}`,
     );
 
     const resMail = await sendMail.json();
