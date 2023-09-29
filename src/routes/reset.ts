@@ -20,11 +20,11 @@ router
     });
 
     let alreadyUp: boolean = false;
-    allTokens.map((token) => {
+
+    allTokens.map(async (token) => {
       if (
         token.isValid &&
-        Math.abs(new Date().getTime() - token.createdAt.getTime()) <
-          60 * 60 * 1000
+        Math.abs(Date.now() - token.createdAt.getTime()) < 60 * 60 * 1000
       ) {
         alreadyUp = true;
       }
@@ -47,7 +47,7 @@ router
     const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
     const sendMail = await fetch(
-      `http://debug.edc.asso.fr/wp-admin/admin-ajax.php?action=mail_before_submit&toemail=${user.user_email}&message=${message}`,
+      `http://localhost/assoedc/wp-admin/admin-ajax.php?action=mail_before_submit&toemail=laurent@wasabi-artwork.com&message=${message}`,
     );
 
     const resMail = await sendMail.json();
@@ -80,10 +80,7 @@ router
         .status(400)
         .json({ Message: "Votre token de validation n'est pas valide" });
 
-    if (
-      Math.abs(new Date().getTime() - myToken.createdAt.getTime()) >
-      60 * 60 * 1000
-    ) {
+    if (Math.abs(Date.now() - myToken.createdAt.getTime()) > 60 * 60 * 1000) {
       await prisma.token.update({
         data: {
           isValid: false,
