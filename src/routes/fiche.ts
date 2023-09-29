@@ -6,9 +6,9 @@ import { parseSoapXML } from "../../utils/parseSoap";
 const router: Router = express.Router();
 
 const getSoapResult: (
-  ficheID: string
+  ficheID: string,
 ) => Promise<string | { Message: string }> = (
-  ficheID: string
+  ficheID: string,
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -17,7 +17,7 @@ const getSoapResult: (
         { IdFiche: ficheID },
         (_err: string, result: { GetInfoFicheResult: string }) => {
           return resolve(result.GetInfoFicheResult);
-        }
+        },
       );
     });
   });
@@ -53,9 +53,9 @@ router.get("", express.json(), async (req: Request, res: Response) => {
 });
 
 const getSoapResultAll: (
-  num_adherent: string
+  num_adherent: string,
 ) => Promise<string | { Message: string }> = (
-  num_adherent: string
+  num_adherent: string,
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -64,7 +64,7 @@ const getSoapResultAll: (
         { EmailAdherent: num_adherent },
         (_err: string, result: { GetListeFichesAdherentResult: string }) => {
           return resolve(result.GetListeFichesAdherentResult);
-        }
+        },
       );
     });
   });
@@ -80,22 +80,23 @@ router.get("/all", express.json(), async (req: Request, res: Response) => {
     return res.status(400).json({ Message: soapData });
 
   const ficheInfos = await parseSoapXML<AllFiches>(soapData);
+  console.log(ficheInfos.DocumentElement.Fiches);
   const fmtFiches: FmtFiche[] = [];
   ficheInfos.DocumentElement.Fiches.forEach((fiche) => {
     fmtFiches.push({
-      FicheId: fiche.FicheId[0],
-      FicheRef: fiche.FicheRef[0],
-      DatePriseEnCompte: fiche.DatePriseEnCompte[0],
-      Domaine: fiche.Domaine[0],
-      Gestionnaire: fiche.Gestionnaire[0],
-      Statut: fiche.Statut[0],
-      DateDerniereAction: fiche.DateDerniereAction[0],
-      lib_statut: fiche.lib_statut[0],
+      FicheId: fiche.FicheId?.[0],
+      FicheRef: fiche.FicheRef?.[0],
+      DatePriseEnCompte: fiche.DatePriseEnCompte?.[0],
+      Domaine: fiche.Domaine?.[0],
+      Gestionnaire: fiche.Gestionnaire?.[0],
+      Statut: fiche.Statut?.[0],
+      DateDerniereAction: fiche.DateDerniereAction?.[0],
+      lib_statut: fiche.lib_statut?.[0],
       Lot: fiche.Lot?.[0],
       Programme: fiche.Programme?.[0],
       DateCloture: fiche.DateCloture?.[0],
       SousDomaine: fiche.SousDomaine?.[0],
-      lib_histo: fiche.lib_histo[0],
+      lib_histo: fiche.lib_histo?.[0],
     });
   });
 
