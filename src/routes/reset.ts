@@ -4,6 +4,7 @@ import { randomUUID } from "crypto";
 import express, { Request, Response, Router } from "express";
 import { prisma } from "../../db/getPrisma";
 import { hashPass } from "../../utils/hashPass";
+import fetch from "node-fetch";
 
 const router: Router = express.Router();
 
