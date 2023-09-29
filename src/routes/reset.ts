@@ -43,11 +43,11 @@ router
     if (!token)
       return res.status(400).json({ Message: "Error creating token" });
 
-    const url = "http://localhost/assoedc/adherent-reinitialiser-mot-de-passe/";
+    const url = "http://debug.edc.asso.fr/adherent-reinitialiser-mot-de-passe/";
     const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
     const sendMail = await fetch(
-      `http://localhost/assoedc/wp-admin/admin-ajax.php?action=mail_before_submit&toemail=${user.user_email}&message=${message}`,
+      `http://debug.edc.asso.fr/wp-admin/admin-ajax.php?action=mail_before_submit&toemail=${user.user_pass}&message=${message}`,
     );
 
     const resMail = await sendMail.json();

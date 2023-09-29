@@ -219,7 +219,7 @@ router
     const updatedUser = await prisma.adh_users.update({
       where: { ID: actualUser.ID },
       data: {
-        user_pass: password,
+        user_pass: await hashPass(password),
       },
     });
 
@@ -271,13 +271,15 @@ router
 
     if (!dbUser) return res.status(400).json({ Message: "Cannot find user" });
 
+    const pass = await hashPass(user_pass);
+
     const user = await prisma.adh_users.update({
       where: {
         ID: dbUser.ID,
       },
       data: {
         user_login,
-        user_pass,
+        user_pass: pass,
         user_nicename,
         user_email,
         user_url,
