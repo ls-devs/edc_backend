@@ -7,9 +7,9 @@ import { parseSoapXML } from "../../utils/parseSoap";
 const router: Router = express.Router();
 
 const getSoapResult: (
-  emailAdh: string
+  emailAdh: string,
 ) => Promise<string | { Message: string }> = (
-  emailAdh: string
+  emailAdh: string,
 ): Promise<string | { Message: string }> => {
   return new Promise((resolve, _reject) => {
     Soap.createClient(`${process.env.SOAP_URL}`, {}, (_err, client) => {
@@ -20,10 +20,10 @@ const getSoapResult: (
           _err: string,
           result: {
             GetAdherentDonneesResult: string;
-          }
+          },
         ) => {
           return resolve(result.GetAdherentDonneesResult);
-        }
+        },
       );
     });
   });
@@ -42,6 +42,7 @@ router.post("", express.json(), async (req: Request, res: Response) => {
 
   const adhJson = await parseSoapXML<Adherent>(soapData);
   const adherent = adhJson.DocumentElement.Adherent[0];
+  console.log(adherent);
 
   const formatedAdh = {
     IdContact: adherent.IdContact[0],

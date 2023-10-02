@@ -80,7 +80,6 @@ router.get("/all", express.json(), async (req: Request, res: Response) => {
     return res.status(400).json({ Message: soapData });
 
   const ficheInfos = await parseSoapXML<AllFiches>(soapData);
-  console.log(ficheInfos.DocumentElement.Fiches);
   const fmtFiches: FmtFiche[] = [];
   ficheInfos.DocumentElement.Fiches.forEach((fiche) => {
     fmtFiches.push({

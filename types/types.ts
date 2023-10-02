@@ -487,3 +487,49 @@ export type FmtVilles = {
   Ville?: string;
   CodePostal?: string;
 };
+
+export type DetailCotisation = {
+  DocumentElement: {
+    cotisation: [
+      {
+        Annee: [string];
+        IdAdhesion: [string];
+        Numero: [string];
+        idcontact: [string];
+        nom: [string];
+        prenom: [string];
+        intitule: [string];
+        CiviliteCourte: [string];
+        Adresse1: [string];
+        Adresse2: [string];
+        Adresse3: [string];
+        CodePostal: [string];
+        Ville: [string];
+        pays: [string];
+        mode_reglement: [string];
+        DateEncaissementCotisation: [string];
+        MontantCotisation: [string];
+      },
+    ];
+  };
+};
+
+export type FmtDetailCotisation = {
+  Annee: string;
+  IdAdhesion: string;
+  Numero: string;
+  idcontact: string;
+  nom: string;
+  prenom: string;
+  intitule: string;
+  CiviliteCourte: string;
+  Adresse1: string;
+  Adresse2: string;
+  Adresse3: string;
+  CodePostal: string;
+  Ville: string;
+  pays: string;
+  mode_reglement: string;
+  DateEncaissementCotisation: string;
+  MontantCotisation: string;
+};

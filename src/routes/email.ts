@@ -1,6 +1,6 @@
-import express, { Request, Response, Router, json } from "express";
+import express, { Request, Response, Router } from "express";
 import { prisma } from "../../db/getPrisma";
-import fetch from "node-fetch"
+import fetch from "node-fetch";
 
 const router: Router = express.Router();
 

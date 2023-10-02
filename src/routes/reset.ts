@@ -5,6 +5,7 @@ import express, { Request, Response, Router } from "express";
 import { prisma } from "../../db/getPrisma";
 import { hashPass } from "../../utils/hashPass";
 import fetch from "node-fetch";
+import * as nodemailer from "nodemailer";
 
 const router: Router = express.Router();
 
@@ -44,11 +45,30 @@ router
     if (!token)
       return res.status(400).json({ Message: "Error creating token" });
 
-    const url = "http://debug.edc.asso.fr/adherent-reinitialiser-mot-de-passe/";
+    const url = "http://192.168.1.147.4/adherent-reinitialiser-mot-de-passe/";
     const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
+    // const transporter = nodemailer.createTransport({
+    //   host: "smtp.forwardemail.net",
+    //   port: 465,
+    //   secure: true,
+    //   auth: {
+    //     // TODO: replace `user` and `pass` values from <https://forwardemail.net>
+    //     user: "REPLACE-WITH-YOUR-ALIAS@YOURDOMAIN.COM",
+    //     pass: "REPLACE-WITH-YOUR-GENERATED-PASSWORD",
+    //   },
+    // });
+    //
+    // const info = await transporter.sendMail({
+    //   from: '"ASSOEDC" <foo@example.com>', // sender address
+    //   to: `${user.user_email}`, // list of receivers
+    //   subject: "Hello ✔", // Subject line
+    //   text: "Hello world?", // plain text body
+    //   html: "<b>Hello world?</b>", // html body
+    // });
+
     const sendMail = await fetch(
-      `http://debug.edc.asso.fr/wp-admin/admin-ajax.php?action=mail_before_submit&toemail=${user.user_pass}&message=${message}`,
+      `http://192.168.147.4/wp-admin/admin-ajax.php?action=mail_before_submit&toemail=${user.user_pass}&message=${message}`,
     );
 
     const resMail = await sendMail.json();
