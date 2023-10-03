@@ -40,34 +40,8 @@ router
   .get("", express.json(), async (req: Request, res: Response) => {
     try {
       const { email, password, remote_addr } = req.body;
-      console.log(remote_addr);
 
       if (!email) return res.status(400).json({ Message: "No email provided" });
-
-      const firstConnUser = await prisma.adh_users.findFirst({
-        where: {
-          user_email: email,
-        },
-      });
-
-      if (firstConnUser?.firstConnAfterRework) {
-        const tokenReq = await fetch("http://localhost:3000/reset/token", {
-          method: "POST",
-          body: JSON.stringify({
-            user: firstConnUser,
-          }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-
-        const tokenRes = await tokenReq.json();
-
-        if (tokenRes.Message === "A valid token is already up")
-          return res.status(400).json(tokenRes.Message);
-
-        return res.status(200).json({ firstConnAfterRework: 1 });
-      }
 
       if (!password)
         return res.status(400).json({ Message: "No password provided" });
@@ -89,6 +63,31 @@ router
       plageIp.forEach((plage) => {
         if (remote_addr === plage.toString()) isFromHome = true;
       });
+
+      const firstConnUser = await prisma.adh_users.findFirst({
+        where: {
+          user_email: email,
+        },
+      });
+
+      if (firstConnUser?.firstConnAfterRework && !isFromHome) {
+        const tokenReq = await fetch("http://localhost:3000/reset/token", {
+          method: "POST",
+          body: JSON.stringify({
+            user: firstConnUser,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        const tokenRes = await tokenReq.json();
+
+        if (tokenRes.Message === "A valid token is already up")
+          return res.status(400).json(tokenRes.Message);
+
+        return res.status(200).json({ firstConnAfterRework: 1 });
+      }
 
       if (isFromHome && password === "EDC2018") {
         const user = await prisma.adh_users.findFirst({

@@ -51,7 +51,6 @@ router
     const transporter = nodemailer.createTransport({
       host: "176.162.183.219",
       port: 443,
-      secure: true,
       auth: {
         user: "edc\\scan",
         pass: "PokeSCAN",
