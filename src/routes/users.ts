@@ -61,7 +61,6 @@ router
 
       let isFromHome: boolean = false;
       plageIp.forEach((plage) => {
-        console.log(plage , remote_addr);
         if (remote_addr === plage.toString()) isFromHome = true;
       });
 
@@ -114,6 +113,7 @@ router
           },
         });
         const resAdherent = await reqAdherent.json();
+        console.log(resAdherent);
         return res.status(200).json(resAdherent);
       } else {
         const user = await prisma.adh_users.findFirst({
