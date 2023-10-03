@@ -48,32 +48,24 @@ router
     const url = "http://192.168.1.147.4/adherent-reinitialiser-mot-de-passe/";
     const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
-    // const transporter = nodemailer.createTransport({
-    //   host: "smtp.forwardemail.net",
-    //   port: 465,
-    //   secure: true,
-    //   auth: {
-    //     // TODO: replace `user` and `pass` values from <https://forwardemail.net>
-    //     user: "REPLACE-WITH-YOUR-ALIAS@YOURDOMAIN.COM",
-    //     pass: "REPLACE-WITH-YOUR-GENERATED-PASSWORD",
-    //   },
-    // });
-    //
-    // const info = await transporter.sendMail({
-    //   from: '"ASSOEDC" <foo@example.com>', // sender address
-    //   to: `${user.user_email}`, // list of receivers
-    //   subject: "Hello ✔", // Subject line
-    //   text: "Hello world?", // plain text body
-    //   html: "<b>Hello world?</b>", // html body
-    // });
+    const transporter = nodemailer.createTransport({
+      host: "176.162.183.219",
+      port: 443,
+      secure: true,
+      auth: {
+        user: "edc\\scan",
+        pass: "PokeSCAN",
+      },
+    });
 
-    const sendMail = await fetch(
-      `http://192.168.147.4/wp-admin/admin-ajax.php?action=mail_before_submit&toemail=${user.user_pass}&message=${message}`,
-    );
+    const mail = await transporter.sendMail({
+      from: '"ASSOEDC" <sea@edc.asso.fr>',
+      to: `laurent@wasabi-artwork.com`,
+      subject: "Réinitialisation de votre mot de passe",
+      html: message,
+    });
 
-    const resMail = await sendMail.json();
-
-    res.status(200).json(resMail);
+    res.status(200).json(mail);
   })
 
   .get("/verify", express.json(), async (req: Request, res: Response) => {

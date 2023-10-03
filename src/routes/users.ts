@@ -40,6 +40,7 @@ router
   .get("", express.json(), async (req: Request, res: Response) => {
     try {
       const { email, password, remote_addr } = req.body;
+      console.log(remote_addr);
 
       if (!email) return res.status(400).json({ Message: "No email provided" });
 
@@ -77,7 +78,19 @@ router
       if (!/\S+@\S+\.\S+/.test(email))
         return res.status(400).json({ Message: "Invalid email" });
 
-      if (remote_addr === "176.162.183.218" && password === "EDC2018") {
+      const plageIp = Array.from(
+        {
+          length: 255,
+        },
+        (item, index) => (item = `192.168.1.123.${index + 1}`),
+      );
+
+      let isFromHome: boolean = false;
+      plageIp.forEach((plage) => {
+        if (remote_addr === plage.toString()) isFromHome = true;
+      });
+
+      if (isFromHome && password === "EDC2018") {
         const user = await prisma.adh_users.findFirst({
           where: {
             user_email: email,
