@@ -70,7 +70,7 @@ router
         },
       });
 
-      if (firstConnUser?.firstConnAfterRework && !isFromHome) {
+      if (firstConnUser?.firstConnAfterRework) {
         const tokenReq = await fetch("http://localhost:3000/reset/token", {
           method: "POST",
           body: JSON.stringify({

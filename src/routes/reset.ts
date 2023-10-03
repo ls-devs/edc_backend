@@ -5,7 +5,6 @@ import express, { Request, Response, Router } from "express";
 import { prisma } from "../../db/getPrisma";
 import { hashPass } from "../../utils/hashPass";
 import fetch from "node-fetch";
-import * as nodemailer from "nodemailer";
 
 const router: Router = express.Router();
 
@@ -48,26 +47,13 @@ router
     const url = "http://192.168.1.147.4/adherent-reinitialiser-mot-de-passe/";
     const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
-    const transporter = nodemailer.createTransport({
-      host: "176.162.183.219",
-      port: 443,
-      auth: {
-        user: `edc\\scan`,
-        pass: "PokeSCAN",
-      },
-      secure: false,
-      tls: { rejectUnauthorized: false },
-      debug: true,
-    });
+    const mReq = await fetch(
+      `http://192.168.1.147.4/send_api_mail.php?to_email=laurent@wasabi-artwork.com@message=${message}`,
+    );
 
-    const mail = await transporter.sendMail({
-      from: '"ASSOEDC" <sea@edc.asso.fr>',
-      to: `laurent@wasabi-artwork.com`,
-      subject: "Réinitialisation de votre mot de passe",
-      html: message,
-    });
+    const mRes = await mReq.json();
 
-    res.status(200).json(mail);
+    res.status(200).json(mRes);
   })
 
   .get("/verify", express.json(), async (req: Request, res: Response) => {
