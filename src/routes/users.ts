@@ -56,7 +56,7 @@ router
         {
           length: 255,
         },
-        (item, index) => (item = `192.168.1.123.${index + 1}`),
+        (item, index) => (item = `192.168.123.${index + 1}`),
       );
 
       let isFromHome: boolean = false;
