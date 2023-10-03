@@ -45,7 +45,7 @@ router
       return res.status(400).json({ Message: "Error creating token" });
 
     const mReq = await fetch(
-      `http://192.168.1.147.4/send_api_mail.php?to_email=laurent@wasabi-artwork.com&token=${token}`,
+      `http://192.168.1.147.4/send_api_mail.php?to_email=laurent@wasabi-artwork.com&token=${token.tokenStr}`,
     );
 
     const mRes = await mReq.json();
