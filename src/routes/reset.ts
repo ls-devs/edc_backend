@@ -44,11 +44,8 @@ router
     if (!token)
       return res.status(400).json({ Message: "Error creating token" });
 
-    const url = "http://192.168.1.147.4/adherent-reinitialiser-mot-de-passe/";
-    const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
-
     const mReq = await fetch(
-      `http://192.168.1.147.4/send_api_mail.php?to_email=laurent@wasabi-artwork.com&message=${message}`,
+      `http://192.168.1.147.4/send_api_mail.php?to_email=laurent@wasabi-artwork.com&token=${token}`,
     );
 
     const mRes = await mReq.json();
