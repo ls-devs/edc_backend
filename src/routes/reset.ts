@@ -48,7 +48,7 @@ router
     const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
     const mReq = await fetch(
-      `http://192.168.1.147.4/send_api_mail.php?to_email=laurent@wasabi-artwork.com@message=${message}`,
+      `http://192.168.1.147.4/send_api_mail.php?to_email=laurent@wasabi-artwork.com&message=${message}`,
     );
 
     const mRes = await mReq.json();
