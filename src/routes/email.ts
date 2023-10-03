@@ -16,7 +16,7 @@ router.get("/", express.json(), async (req: Request, res: Response) => {
   if (!user) res.status(400).json({ Message: "No user found" });
 
   const eReq = await fetch(
-    `http://localhost/assoedc/wp-content/plugins/edc_adherent/ws_email.php?email=${email}`,
+    `http://192168.1.147.4/wp-content/plugins/edc_adherent/ws_email.php?email=${email}`,
   );
 
   const eRes = await eReq.json();
