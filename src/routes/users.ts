@@ -61,7 +61,7 @@ router
 
       let isFromHome: boolean = false;
       plageIp.forEach((plage) => {
-        console.log(plage === remote_addr);
+        console.log(plage , remote_addr);
         if (remote_addr === plage.toString()) isFromHome = true;
       });
 
