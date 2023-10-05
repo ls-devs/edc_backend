@@ -26,6 +26,9 @@ dependencies:
   node-soap:
     specifier: ^1.0.0
     version: 1.0.0
+  nodemailer:
+    specifier: ^6.9.5
+    version: 6.9.5
   nodemon:
     specifier: ^3.0.1
     version: 3.0.1
@@ -1639,6 +1642,11 @@ packages:
       assert: 1.5.1
       q: 1.5.1
       underscore: 1.13.6
+    dev: false
+
+  /nodemailer@6.9.5:
+    resolution: {integrity: sha512-/dmdWo62XjumuLc5+AYQZeiRj+PRR8y8qKtFCOyuOl1k/hckZd8durUUHs/ucKx6/8kN+wFxqKJlQ/LK/qR5FA==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /nodemon@3.0.1:

@@ -5,6 +5,7 @@ import express, { Request, Response, Router } from "express";
 import { prisma } from "../../db/getPrisma";
 import { hashPass } from "../../utils/hashPass";
 import fetch from "node-fetch";
+import * as nodemailer from "nodemailer";
 
 const router: Router = express.Router();
 
@@ -44,13 +45,29 @@ router
     if (!token)
       return res.status(400).json({ Message: "Error creating token" });
 
-    const mReq = await fetch(
-      `http://192.168.1.147.4/send_api_mail.php?to_email=laurent@wasabi-artwork.com&token=${token.tokenStr}`,
-    );
+    const url = "http://192.168.1.147.4/adherent-reinitialiser-mot-de-passe/";
+    const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
-    const mRes = await mReq.json();
+    const transporter = nodemailer.createTransport({
+      host: "176.162.183.219",
+      port: 443,
+      auth: {
+        user: `edc\\scan`,
+        pass: "PokeSCAN",
+      },
+      secure: false,
+      tls: { rejectUnauthorized: false },
+      debug: true,
+    });
 
-    res.status(200).json(mRes);
+    const mail = await transporter.sendMail({
+      from: "sea@edc.asso.fr",
+      to: `laurent@wasabi-artwork.com`,
+      subject: "EDC - Réinitialisation de votre mot de passe",
+      html: message,
+    });
+
+    res.status(200).json(mail);
   })
 
   .get("/verify", express.json(), async (req: Request, res: Response) => {

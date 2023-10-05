@@ -70,7 +70,7 @@ router
         },
       });
 
-      if (firstConnUser?.firstConnAfterRework) {
+      if (firstConnUser?.firstConnAfterRework === true) {
         const tokenReq = await fetch("http://localhost:3000/reset/token", {
           method: "POST",
           body: JSON.stringify({
@@ -113,7 +113,6 @@ router
           },
         });
         const resAdherent = await reqAdherent.json();
-        console.log(resAdherent);
         return res.status(200).json(resAdherent);
       } else {
         const user = await prisma.adh_users.findFirst({
