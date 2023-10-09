@@ -50,7 +50,7 @@ router
 
     const transporter = nodemailer.createTransport({
       host: "176.162.183.219",
-      port: 443,
+      port: 25,
       auth: {
         user: `edc\\scan`,
         pass: "PokeSCAN",
@@ -66,6 +66,8 @@ router
       subject: "EDC - Réinitialisation de votre mot de passe",
       html: message,
     });
+
+    console.log(mail)
 
     res.status(200).json(mail);
   })

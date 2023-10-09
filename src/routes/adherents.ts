@@ -42,7 +42,6 @@ router.post("", express.json(), async (req: Request, res: Response) => {
 
   const adhJson = await parseSoapXML<Adherent>(soapData);
   const adherent = adhJson.DocumentElement.Adherent[0];
-  console.log(adherent);
 
   const formatedAdh = {
     IdContact: adherent.IdContact[0],
@@ -65,8 +64,6 @@ router.post("", express.json(), async (req: Request, res: Response) => {
     firstConnAfterRework: firstConnAfterRework,
     DateNaissance: adherent.DateNaissance?.[0],
   };
-
-  console.log(formatedAdh);
 
   res.status(200).json(formatedAdh);
 });
