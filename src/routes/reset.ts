@@ -45,11 +45,11 @@ router
     if (!token)
       return res.status(400).json({ Message: "Error creating token" });
 
-    const url = "http://192.168.1.147.4/adherent-reinitialiser-mot-de-passe/";
+    const url = "http://debug.edc.asso.fr/adherent-reinitialiser-mot-de-passe/";
     const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
     const transporter = nodemailer.createTransport({
-      host: "176.162.183.219",
+      host: "192.168.123.68",
       port: 25,
       auth: {
         user: `edc\\scan`,
@@ -62,12 +62,10 @@ router
 
     const mail = await transporter.sendMail({
       from: "sea@edc.asso.fr",
-      to: `laurent@wasabi-artwork.com`,
+      to: user.user_email,
       subject: "EDC - Réinitialisation de votre mot de passe",
       html: message,
     });
-
-    console.log(mail)
 
     res.status(200).json(mail);
   })
