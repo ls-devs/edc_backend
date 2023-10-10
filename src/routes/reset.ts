@@ -45,7 +45,8 @@ router
     if (!token)
       return res.status(400).json({ Message: "Error creating token" });
 
-    const url = "http://debug.edc.asso.fr/adherent-reinitialiser-mon-mot-de-passe/";
+    const url =
+      "http://debug.edc.asso.fr/adherent-reinitialiser-mon-mot-de-passe/";
     const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
 
     const transporter = nodemailer.createTransport({
