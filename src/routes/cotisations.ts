@@ -35,12 +35,6 @@ router.get("", express.json(), async (req: Request, res: Response) => {
   if (resPaiement === null) return res.status(200).json({});
 
   const formattedPaiement: Paiement = {
-    "0": resPaiement[0][0],
-    "1": resPaiement[0][1],
-    "2": resPaiement[0][2],
-    "3": resPaiement[0][3],
-    "4": resPaiement[0][4],
-    "5": resPaiement[0][5],
     Numero: resPaiement[0].Numero,
     Montant: resPaiement[0].Montant,
     DateAppelCotisation: resPaiement[0].DateAppelCotisation,
