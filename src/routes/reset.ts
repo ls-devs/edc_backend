@@ -92,12 +92,10 @@ router
         .json({ Message: "Le token de validation n'existe pas" });
 
     if (!myToken.isValid)
-      return res
-        .status(400)
-        .json({ Message: "Votre token de validation n'est pas valide" });
+      return res.status(400).json({ Message: "Votre token n'est pas valide" });
 
     if (Math.abs(Date.now() - myToken.createdAt.getTime()) > 60 * 60 * 1000) {
-      await prisma.token.update({
+      const cToken = await prisma.token.update({
         data: {
           isValid: false,
         },
@@ -105,9 +103,57 @@ router
           tokenStr: token,
         },
       });
-      return res
-        .status(400)
-        .json({ Message: "Votre token de validation a expiré" });
+
+      const nUser = await prisma.adh_users.findFirst({
+        where: {
+          ID: cToken.adh_usersID,
+        },
+      });
+
+      if (!nUser)
+        res.status(400).json({
+          Message: "Impossible de trouver un utilisateur lié à ce Token",
+        });
+
+      const newToken = await prisma.token.create({
+        data: {
+          tokenStr: randomUUID(),
+          adh_usersID: nUser!.ID,
+        },
+      });
+
+      if (!newToken)
+        return res
+          .status(400)
+          .json({ Message: "Impossible de recréer un token" });
+
+      const url =
+        "http://debug.edc.asso.fr/adherent-reinitialiser-mon-mot-de-passe/";
+      const message = `Veuillez modifier votre mot de passe en cliquant lien suivant : ${url}?token=${token.tokenStr} <br> Ce lien est valide pendant une heure.`;
+
+      const transporter = nodemailer.createTransport({
+        host: "192.168.123.68",
+        port: 25,
+        auth: {
+          user: `edc\\scan`,
+          pass: "PokeSCAN",
+        },
+        secure: false,
+        tls: { rejectUnauthorized: false },
+        debug: true,
+      });
+
+      const mail = await transporter.sendMail({
+        from: "sea@edc.asso.fr",
+        to: nUser!.user_email,
+        subject: "EDC - Réinitialisation de votre mot de passe",
+        html: message,
+      });
+
+      return res.status(400).json({
+        Message:
+          "Votre token de validation a expiré, un nouveau mail vient de vous êtres envoyé.",
+      });
     }
 
     const myUser = await prisma.adh_users.findUnique({

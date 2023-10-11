@@ -65,6 +65,7 @@ router.post("", express.json(), async (req: Request, res: Response) => {
     DateNaissance: adherent.DateNaissance?.[0],
   };
 
+
   res.status(200).json(formatedAdh);
 });
 
